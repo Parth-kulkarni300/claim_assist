@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClaimAssist – Customer Portal</title>
+  <meta name="description" content="Submit your vehicle damage claim and track your payout status."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #070b14; --surface: #0d1425; --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08); --border-hover: rgba(59,130,246,0.5);
+      --text: #e2e8f0; --muted: #64748b; --subtle: #94a3b8;
+      --blue: #3b82f6; --blue-light: #60a5fa; --blue-glow: rgba(59,130,246,0.3);
+      --green: #10b981; --green-light: #34d399;
+      --amber: #f59e0b; --red: #ef4444; --red-light: #fca5a5;
+      --radius: 16px; --radius-sm: 10px;
+    }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,11,20,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .nav-logo-icon { font-size: 1.4rem; }
+    .nav-logo-text { font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg,#60a5fa,#34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-badge { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: var(--blue-light); padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+    .nav-home { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .nav-home:hover { color: var(--text); }
+
+    /* ── Layout ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* ── Wallet card ── */
+    .wallet-card {
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(16,185,129,0.1));
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 24px; padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+      position: relative; overflow: hidden;
+    }
+    .wallet-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 70%); pointer-events: none; }
+    .wallet-left { display: flex; align-items: center; gap: 1.25rem; }
+    .wallet-icon { font-size: 2.5rem; filter: drop-shadow(0 0 12px rgba(59,130,246,0.6)); }
+    .wallet-label { font-size: 0.8rem; color: var(--subtle); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+    .wallet-amount { font-size: 2.4rem; font-weight: 800; letter-spacing: -1px; }
+    .wallet-amount span { font-size: 1.1rem; font-weight: 500; color: var(--subtle); margin-right: 0.2rem; }
+    .wallet-sub { font-size: 0.82rem; color: var(--subtle); margin-top: 0.25rem; }
+    .wallet-badge { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: var(--green-light); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600; }
+
+    /* ── Section title ── */
+    .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+
+    /* ── Submit form ── */
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 1.75rem; margin-bottom: 2rem;
+      backdrop-filter: blur(20px);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 550px) { .form-row { grid-template-columns: 1fr; } }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.45rem; }
+    .field input {
+      width: 100%; padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text); font-family: inherit; font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
+    .field input::placeholder { color: var(--muted); }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--border); border-radius: var(--radius);
+      padding: 2.5rem 1rem; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s; margin-bottom: 1.25rem;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.over { border-color: var(--blue); background: rgba(59,130,246,0.06); }
+    .drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .drop-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .drop-text { font-size: 0.95rem; color: var(--subtle); }
+    .drop-text strong { color: var(--blue-light); }
+    .drop-hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
+
+    /* Preview */
+    #preview-box { display: none; margin-bottom: 1.25rem; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); position: relative; }
+    #preview-box img { width: 100%; max-height: 260px; object-fit: cover; display: block; }
+    .preview-clear { position: absolute; top: 0.6rem; right: 0.6rem; background: rgba(0,0,0,0.7); border: none; color: #fff; font-size: 1.1rem; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%; padding: 0.9rem; border: none; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--blue), #2563eb);
+      color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Spinner */
+    .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      background: #1e293b; border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem 1.5rem; max-width: 360px; font-size: 0.9rem;
+      transform: translateY(20px); opacity: 0; transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-color: rgba(16,185,129,0.4); }
+    #toast.error   { border-color: rgba(239,68,68,0.4); }
+    .toast-title { font-weight: 700; margin-bottom: 0.2rem; }
+    .toast-body  { color: var(--subtle); font-size: 0.82rem; }
+
+    /* ── Claims list ── */
+    .claims-grid { display: flex; flex-direction: column; gap: 1rem; }
+    .claim-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.25rem;
+      transition: border-color 0.2s;
+      flex-wrap: wrap;
+    }
+    .claim-card:hover { border-color: rgba(255,255,255,0.15); }
+    .claim-thumb { width: 72px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.05); }
+    .claim-thumb-placeholder { width: 72px; height: 56px; border-radius: 10px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .claim-info { flex: 1; min-width: 0; }
+    .claim-id { font-size: 0.8rem; color: var(--muted); font-family: monospace; margin-bottom: 0.2rem; }
+    .claim-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .claim-date { font-size: 0.78rem; color: var(--muted); }
+    .claim-right { text-align: right; flex-shrink: 0; }
+    .claim-amount { font-size: 1.2rem; font-weight: 700; color: var(--green-light); }
+    .claim-amount-label { font-size: 0.75rem; color: var(--muted); }
+
+    /* Status badges */
+    .badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .badge-pending  { background: rgba(245,158,11,0.15);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-approved { background: rgba(16,185,129,0.15);  color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-rejected { background: rgba(239,68,68,0.12);   color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-review   { background: rgba(139,92,246,0.15);  color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+
+    .empty-state { text-align: center; color: var(--muted); padding: 3rem 1rem; font-size: 0.95rem; }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+    /* ── Separator ── */
+    .sep { height: 1px; background: var(--border); margin: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <span class="nav-logo-icon">🛡️</span>
+    <span class="nav-logo-text">ClaimAssist</span>
+  </a>
+  <span class="nav-badge">👤 Customer Portal</span>
+  <a class="nav-home" href="/">← Home</a>
+</nav>
+
+<main class="container">
+
+  <!-- Wallet -->
+  <div class="wallet-card">
+    <div class="wallet-left">
+      <div class="wallet-icon">💰</div>
+      <div>
+        <div class="wallet-label">Approved Balance</div>
+        <div class="wallet-amount" id="wallet-amount"><span>₹</span><span id="wallet-num">0</span></div>
+        <div class="wallet-sub" id="wallet-sub">No approved claims yet</div>
+      </div>
+    </div>
+    <div class="wallet-badge" id="wallet-badge">Pending Review</div>
+  </div>
+
+  <!-- Submit Claim -->
+  <div class="section-title"><span class="dot"></span> Submit New Claim</div>
+  <div class="form-card">
+    <form id="claim-form" autocomplete="off">
+      <div class="form-row">
+        <div class="field">
+          <label for="customer-name">Your Full Name</label>
+          <input type="text" id="customer-name" placeholder="e.g. Rajesh Kumar" required/>
+        </div>
+        <div class="field">
+          <label for="vehicle-no">Vehicle Registration No.</label>
+          <input type="text" id="vehicle-no" placeholder="e.g. MH12AB1234" required/>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp"/>
+        <div class="drop-icon">📷</div>
+        <div class="drop-text">Drag & drop your vehicle photo or <strong>click to browse</strong></div>
+        <div class="drop-hint">JPG, PNG, WEBP · Max 16 MB</div>
+      </div>
+
+      <div id="preview-box">
+        <img id="preview-img" src="" alt="Selected vehicle"/>
+        <button type="button" class="preview-clear" id="clear-btn" title="Remove image">✕</button>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submit-btn">
+        <div class="spinner" id="spinner"></div>
+        <span id="submit-label">🚗 Submit Claim</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Claims list -->
+  <div class="section-title"><span class="dot"></span> My Claims</div>
+  <div class="claims-grid" id="claims-list">
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div>No claims submitted yet.<br/>Fill out the form above to get started.</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Toast notification -->
+<div id="toast">
+  <div class="toast-title" id="toast-title"></div>
+  <div class="toast-body"  id="toast-body"></div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  const STORAGE_KEY = 'claimassist_claim_ids';
+  let myClaimIds = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let selectedFile = null;
+
+  // ── Toast ──────────────────────────────────────────────────────────────────
+  function toast(title, body, type = 'success') {
+    const el = document.getElementById('toast');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-body').textContent  = body;
+    el.className = 'show ' + type;
+    setTimeout(() => { el.className = ''; }, 4000);
+  }
+
+  // ── File selection ─────────────────────────────────────────────────────────
+  const dropZone  = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const previewBox = document.getElementById('preview-box');
+  const previewImg = document.getElementById('preview-img');
+  const clearBtn   = document.getElementById('clear-btn');
+
+  function showPreview(file) {
+    selectedFile = file;
+    previewImg.src = URL.createObjectURL(file);
+    previewBox.style.display = 'block';
+    dropZone.style.display   = 'none';
+  }
+  function clearPreview() {
+    selectedFile = null;
+    fileInput.value = '';
+    previewBox.style.display = 'none';
+    dropZone.style.display   = 'block';
+  }
+
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) showPreview(e.target.files[0]); });
+  clearBtn.addEventListener('click', clearPreview);
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('over');
+    if (e.dataTransfer.files[0]) showPreview(e.dataTransfer.files[0]);
+  });
+
+  // ── Form submit ────────────────────────────────────────────────────────────
+  document.getElementById('claim-form').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const name = document.getElementById('customer-name').value.trim();
+    const veh  = document.getElementById('vehicle-no').value.trim();
+
+    if (!selectedFile) { toast('No image selected', 'Please upload a vehicle photo.', 'error'); return; }
+    if (!name) { toast('Name required', 'Please enter your full name.', 'error'); return; }
+
+    setLoading(true);
+
+    const fd = new FormData();
+    fd.append('image', selectedFile);
+    fd.append('customer_name', name);
+    fd.append('vehicle_number', veh);
+
+    try {
+      const res = await fetch('/api/claims', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      myClaimIds.push(data.claim_id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(myClaimIds));
+
+      toast('Claim Submitted ✅', `Claim #${data.claim_id} sent for review.`, 'success');
+      clearPreview();
+      document.getElementById('claim-form').reset();
+      await refreshClaims();
+    } catch (err) {
+      toast('Submission Failed', err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  function setLoading(on) {
+    document.getElementById('submit-btn').disabled = on;
+    document.getElementById('spinner').style.display  = on ? 'block' : 'none';
+    document.getElementById('submit-label').textContent = on ? 'Analyzing damage…' : '🚗 Submit Claim';
+  }
+
+  // ── Format currency ────────────────────────────────────────────────────────
+  const fmt = n => Number(n).toLocaleString('en-IN');
+  const fmtDate = d => new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+  // ── Render claims ──────────────────────────────────────────────────────────
+  async function refreshClaims() {
+    if (!myClaimIds.length) return;
+
+    const res  = await fetch('/api/claims');
+    const all  = await res.json();
+    const mine = all.filter(c => myClaimIds.includes(c.id));
+
+    // Update wallet
+    const approved = mine.filter(c => c.status === 'approved');
+    const total = approved.reduce((s, c) => s + (c.approved_amount || 0), 0);
+    document.getElementById('wallet-num').textContent = fmt(total);
+    document.getElementById('wallet-sub').textContent =
+      approved.length ? `From ${approved.length} approved claim${approved.length > 1 ? 's' : ''}` : 'No approved claims yet';
+    document.getElementById('wallet-badge').textContent =
+      approved.length ? `✅ ${approved.length} Approved` : '⏳ Pending Review';
+
+    const list = document.getElementById('claims-list');
+
+    if (!mine.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div>No claims found.</div></div>`;
+      return;
+    }
+
+    list.innerHTML = mine.map(c => {
+      const badge = {
+        pending:  `<span class="badge badge-pending">⏳ Pending</span>`,
+        approved: `<span class="badge badge-approved">✅ Approved</span>`,
+        rejected: `<span class="badge badge-rejected">❌ Rejected</span>`,
+      }[c.status] || `<span class="badge badge-review">🔍 Review</span>`;
+
+      const amountHtml = c.status === 'approved'
+        ? `<div class="claim-amount">₹${fmt(c.approved_amount)}</div><div class="claim-amount-label">Approved payout</div>`
+        : c.status === 'rejected'
+        ? `<div style="color:#f87171;font-size:.85rem;font-weight:600;">Rejected</div><div class="claim-amount-label">${c.reject_reason||''}</div>`
+        : `<div style="color:var(--muted);font-size:.85rem;">Awaiting review</div>`;
+
+      const thumb = c.image_filename
+        ? `<img class="claim-thumb" src="/uploads/${c.image_filename}" alt="Vehicle"/>`
+        : `<div class="claim-thumb-placeholder">🚗</div>`;
+
+      return `
+        <div class="claim-card">
+          ${thumb}
+          <div class="claim-info">
+            <div class="claim-id">Claim #${c.id}</div>
+            <div class="claim-name">${c.vehicle_number} · ${c.customer_name}</div>
+            <div class="claim-date">${fmtDate(c.submitted_at)}</div>
+          </div>
+          <div class="claim-right">
+            ${badge}
+            ${amountHtml}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  refreshClaims();
+  setInterval(refreshClaims, 6000); // auto-refresh every 6s
+</script>
+</body>
+</html>

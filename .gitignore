@@ -3,3 +3,13 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.DS_Store
+uploads/
+claims.json
+node_modules/
+frontend/node_modules/
+frontend/dist/

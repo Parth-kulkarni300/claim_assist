@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClaimAssist – AI Vehicle Damage Assessment</title>
+  <meta name="description" content="AI-powered vehicle damage assessment for insurance claims. Upload your photo and get an instant estimate."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #070b14;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --blue: #3b82f6;
+      --blue-glow: rgba(59,130,246,0.35);
+      --green: #10b981;
+      --green-glow: rgba(16,185,129,0.35);
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-anim {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    }
+    .bg-anim::before {
+      content: '';
+      position: absolute;
+      width: 900px; height: 900px;
+      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: drift1 18s ease-in-out infinite alternate;
+    }
+    .bg-anim::after {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
+      bottom: -150px; right: -150px;
+      animation: drift2 22s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(80px, 60px) scale(1.15); } }
+    @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-60px,-40px) scale(1.1); } }
+
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    .logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .logo-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 0 30px var(--blue-glow);
+    }
+    .logo-text {
+      font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #60a5fa, #34d399);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .tagline {
+      font-size: 1.05rem; color: var(--muted); text-align: center;
+      margin-bottom: 3.5rem; max-width: 480px; line-height: 1.6;
+    }
+
+    /* Role cards */
+    .role-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;
+      max-width: 720px; width: 100%;
+    }
+    @media (max-width: 600px) { .role-grid { grid-template-columns: 1fr; } }
+
+    .role-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      backdrop-filter: blur(20px);
+      position: relative; overflow: hidden;
+    }
+    .role-card::before {
+      content: '';
+      position: absolute; inset: 0; opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 24px;
+    }
+    .role-card.customer::before { background: radial-gradient(circle at center, rgba(59,130,246,0.12), transparent 70%); }
+    .role-card.insurer::before  { background: radial-gradient(circle at center, rgba(16,185,129,0.12), transparent 70%); }
+    .role-card:hover { transform: translateY(-6px); }
+    .role-card:hover::before { opacity: 1; }
+    .role-card.customer:hover { border-color: var(--blue); box-shadow: 0 20px 60px var(--blue-glow); }
+    .role-card.insurer:hover  { border-color: var(--green); box-shadow: 0 20px 60px var(--green-glow); }
+
+    .card-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 1.25rem;
+    }
+    .customer .card-icon { background: rgba(59,130,246,0.15); }
+    .insurer  .card-icon { background: rgba(16,185,129,0.15); }
+
+    .card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card-desc  { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+
+    .card-btn {
+      display: inline-block; padding: 0.7rem 1.8rem;
+      border-radius: 50px; font-weight: 600; font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .customer .card-btn { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
+    .insurer  .card-btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .role-card:hover .card-btn { opacity: 0.9; }
+
+    .footer-note {
+      margin-top: 3rem; color: var(--muted); font-size: 0.8rem; text-align: center;
+    }
+    .footer-note a { color: #60a5fa; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="bg-anim"></div>
+  <main class="page">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <span class="logo-text">ClaimAssist</span>
+    </div>
+    <p class="tagline">AI-powered vehicle damage assessment.<br/>Upload a photo — get an instant, transparent estimate.</p>
+
+    <div class="role-grid">
+      <a href="/customer" class="role-card customer">
+        <div class="card-icon">👤</div>
+        <div class="card-title">Customer Portal</div>
+        <p class="card-desc">Submit your vehicle damage claim, track status, and view your approved payout balance.</p>
+        <span class="card-btn">Open Portal →</span>
+      </a>
+
+      <a href="/insurer" class="role-card insurer">
+        <div class="card-icon">🏢</div>
+        <div class="card-title">Insurance Dashboard</div>
+        <p class="card-desc">Review AI-assessed claims, inspect damage breakdowns, and approve or reject payouts.</p>
+        <span class="card-btn">Open Dashboard →</span>
+      </a>
+    </div>
+
+    <p class="footer-note">
+      Powered by <strong>Gemma 4</strong> (Apache 2.0) · Open-source · 
+      <a href="https://github.com/your-org/claim-assist" target="_blank">GitHub</a>
+    </p>
+  </main>
+</body>
+</html>

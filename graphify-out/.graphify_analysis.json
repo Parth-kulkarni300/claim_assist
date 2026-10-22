@@ -1,0 +1,367 @@
+{
+  "communities": {
+    "0": [
+      "base64",
+      "dotenv",
+      "mimetypes",
+      "openai",
+      "os",
+      "src_vision",
+      "src_vision_analyze_damage",
+      "src_vision_encode_image",
+      "src_vision_heuristic_damage_fallback",
+      "src_vision_rationale_101",
+      "src_vision_rationale_110",
+      "src_vision_rationale_132",
+      "src_vision_rationale_160",
+      "src_vision_rationale_66",
+      "src_vision_safe_fallback",
+      "src_vision_validate_vision_result",
+      "tests_test_vision",
+      "tests_test_vision_make_response",
+      "tests_test_vision_rationale_11",
+      "tests_test_vision_rationale_112",
+      "tests_test_vision_rationale_129",
+      "tests_test_vision_rationale_147",
+      "tests_test_vision_rationale_156",
+      "tests_test_vision_rationale_164",
+      "tests_test_vision_rationale_185",
+      "tests_test_vision_rationale_26",
+      "tests_test_vision_rationale_29",
+      "tests_test_vision_rationale_41",
+      "tests_test_vision_rationale_63",
+      "tests_test_vision_rationale_79",
+      "tests_test_vision_rationale_94",
+      "tests_test_vision_testanalyzedamage",
+      "tests_test_vision_testanalyzedamage_call",
+      "tests_test_vision_testanalyzedamage_test_api_connection_error_returns_safe_fallback",
+      "tests_test_vision_testanalyzedamage_test_api_status_error_returns_safe_fallback",
+      "tests_test_vision_testanalyzedamage_test_human_review_flag_passthrough",
+      "tests_test_vision_testanalyzedamage_test_invalid_json_returns_safe_fallback",
+      "tests_test_vision_testanalyzedamage_test_invalid_schema_returns_safe_fallback",
+      "tests_test_vision_testanalyzedamage_test_invalid_severity_returns_safe_fallback",
+      "tests_test_vision_testanalyzedamage_test_markdown_fenced_json_is_parsed",
+      "tests_test_vision_testanalyzedamage_test_missing_api_key_raises",
+      "tests_test_vision_testanalyzedamage_test_missing_image_raises",
+      "tests_test_vision_testanalyzedamage_test_valid_damage_response",
+      "time",
+      "unittest_mock"
+    ],
+    "1": [
+      "frontend_package",
+      "frontend_package_dependencies",
+      "frontend_package_dependencies_canvas_confetti",
+      "frontend_package_dependencies_lucide_react",
+      "frontend_package_dependencies_react",
+      "frontend_package_dependencies_react_dom",
+      "frontend_package_dependencies_types_react",
+      "frontend_package_dependencies_types_react_dom",
+      "frontend_package_dependencies_vitejs_plugin_react",
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_types_canvas_confetti",
+      "frontend_package_devdependencies_typescript",
+      "frontend_package_devdependencies_vite",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_preview",
+      "frontend_package_type",
+      "frontend_package_version",
+      "frontend_vite_config",
+      "ref_canvas_confetti",
+      "ref_react_dom",
+      "ref_types_canvas_confetti",
+      "ref_types_react",
+      "ref_types_react_dom",
+      "ref_typescript",
+      "ref_vite",
+      "ref_vitejs_plugin_react"
+    ],
+    "2": [
+      "frontend_src_api",
+      "frontend_src_api_approveclaim",
+      "frontend_src_api_formatdate",
+      "frontend_src_api_formatinr",
+      "frontend_src_api_getclaim",
+      "frontend_src_api_getclaims",
+      "frontend_src_api_rejectclaim",
+      "frontend_src_api_submitclaim",
+      "frontend_src_app",
+      "frontend_src_app_app",
+      "frontend_src_app_toastitem",
+      "frontend_src_components_customerdashboard",
+      "frontend_src_components_customerdashboard_customerdashboard",
+      "frontend_src_components_customerdashboard_customerdashboardprops",
+      "frontend_src_components_insurerdashboard",
+      "frontend_src_components_insurerdashboard_insurerdashboard",
+      "frontend_src_components_insurerdashboard_insurerdashboard_renderclaimcard",
+      "frontend_src_components_insurerdashboard_insurerdashboardprops",
+      "frontend_src_index",
+      "frontend_src_main",
+      "frontend_src_types",
+      "frontend_src_types_breakdownitem",
+      "frontend_src_types_claim",
+      "frontend_src_types_damageitem",
+      "frontend_src_types_pricingresult",
+      "frontend_src_types_visionresult",
+      "ref_lucide_react",
+      "ref_react"
+    ],
+    "3": [
+      "app",
+      "app_allowed_file",
+      "app_approve_claim",
+      "app_customer_dashboard",
+      "app_get_all_claims",
+      "app_get_claim",
+      "app_index",
+      "app_insurer_dashboard",
+      "app_load_claims",
+      "app_reject_claim",
+      "app_save_claims",
+      "app_serve_assets",
+      "app_submit_claim",
+      "app_uploaded_file",
+      "datetime",
+      "flask",
+      "flask_cors",
+      "json",
+      "pathlib",
+      "route",
+      "seed_claims",
+      "seed_claims_rationale_2",
+      "seed_claims_seed",
+      "shutil",
+      "uuid",
+      "werkzeug_utils"
+    ],
+    "4": [
+      "csv",
+      "pytest",
+      "src_pricing",
+      "src_pricing_estimate_claim",
+      "src_pricing_load_prices",
+      "src_pricing_normalize_damage_type",
+      "src_pricing_normalize_part",
+      "src_pricing_rationale_11",
+      "src_pricing_rationale_30",
+      "src_pricing_rationale_66",
+      "src_pricing_rationale_90",
+      "tests_test_pricing",
+      "tests_test_pricing_rationale_51",
+      "tests_test_pricing_rationale_77",
+      "tests_test_pricing_rationale_95",
+      "tests_test_pricing_test_blurry_photo_requires_review",
+      "tests_test_pricing_test_damage_type_synonyms_lookup",
+      "tests_test_pricing_test_known_damage_estimate",
+      "tests_test_pricing_test_negative_deductible_raises",
+      "tests_test_pricing_test_normalized_part_lookup",
+      "tests_test_pricing_test_policy_limit_capping",
+      "tests_test_pricing_test_unknown_damage_requires_review"
+    ],
+    "5": [
+      "fixture",
+      "io",
+      "tests_test_app",
+      "tests_test_app_client",
+      "tests_test_app_test_approve_claim_custom_amount",
+      "tests_test_app_test_approve_claim_invalid_amount",
+      "tests_test_app_test_approve_claim_suggested_amount",
+      "tests_test_app_test_customer_page",
+      "tests_test_app_test_double_process_conflict",
+      "tests_test_app_test_get_claims_empty",
+      "tests_test_app_test_home_page",
+      "tests_test_app_test_insurer_page",
+      "tests_test_app_test_nonexistent_claim_operations",
+      "tests_test_app_test_reject_claim",
+      "tests_test_app_test_serve_nonexistent_asset",
+      "tests_test_app_test_submit_claim_disallowed_extension",
+      "tests_test_app_test_submit_claim_no_file",
+      "tests_test_app_test_submit_claim_success_and_retrieve"
+    ],
+    "6": [
+      "frontend_tsconfig",
+      "frontend_tsconfig_compileroptions",
+      "frontend_tsconfig_compileroptions_isolatedmodules",
+      "frontend_tsconfig_compileroptions_jsx",
+      "frontend_tsconfig_compileroptions_lib",
+      "frontend_tsconfig_compileroptions_module",
+      "frontend_tsconfig_compileroptions_moduleresolution",
+      "frontend_tsconfig_compileroptions_noemit",
+      "frontend_tsconfig_compileroptions_resolvejsonmodule",
+      "frontend_tsconfig_compileroptions_skiplibcheck",
+      "frontend_tsconfig_compileroptions_strict",
+      "frontend_tsconfig_compileroptions_target",
+      "frontend_tsconfig_compileroptions_types",
+      "frontend_tsconfig_include"
+    ],
+    "7": [
+      "main",
+      "main_main",
+      "src_report",
+      "src_report_generate_report",
+      "src_report_rationale_3",
+      "sys",
+      "tests_test_report",
+      "tests_test_report_test_report_shows_human_review"
+    ]
+  },
+  "cohesion": {
+    "0": 0.0707070707070707,
+    "1": 0.06896551724137931,
+    "2": 0.17989417989417988,
+    "3": 0.15384615384615385,
+    "4": 0.15584415584415584,
+    "5": 0.1111111111111111,
+    "6": 0.14285714285714285,
+    "7": 0.42857142857142855
+  },
+  "gods": [
+    {
+      "id": "src_vision_analyze_damage",
+      "label": "analyze_damage()",
+      "degree": 25
+    },
+    {
+      "id": "src_pricing_estimate_claim",
+      "label": "estimate_claim()",
+      "degree": 17
+    },
+    {
+      "id": "tests_test_vision_testanalyzedamage",
+      "label": "TestAnalyzeDamage",
+      "degree": 13
+    },
+    {
+      "id": "frontend_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 12
+    },
+    {
+      "id": "tests_test_vision_make_response",
+      "label": "_make_response()",
+      "degree": 9
+    },
+    {
+      "id": "frontend_src_components_insurerdashboard_insurerdashboard",
+      "label": "InsurerDashboard()",
+      "degree": 8
+    },
+    {
+      "id": "app_submit_claim",
+      "label": "submit_claim()",
+      "degree": 8
+    },
+    {
+      "id": "frontend_src_types_claim",
+      "label": "Claim",
+      "degree": 7
+    },
+    {
+      "id": "frontend_src_api_formatinr",
+      "label": "formatINR()",
+      "degree": 7
+    },
+    {
+      "id": "app_load_claims",
+      "label": "load_claims()",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "submit_claim()",
+      "target": "analyze_damage()",
+      "source_files": [
+        "app.py",
+        "src/vision.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "analyze_damage()",
+      "source_files": [
+        "main.py",
+        "src/vision.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "submit_claim()",
+      "target": "estimate_claim()",
+      "source_files": [
+        "app.py",
+        "src/pricing.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "estimate_claim()",
+      "source_files": [
+        "main.py",
+        "src/pricing.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_blurry_photo_requires_review()",
+      "target": "estimate_claim()",
+      "source_files": [
+        "tests/test_pricing.py",
+        "src/pricing.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `test_blurry_photo_requires_review()` unexpectedly reaches hub `estimate_claim()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `analyze_damage()` connect `analyze_damage` to `app.py`, `main.py`?",
+      "why": "High betweenness centrality (0.167) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `@types/canvas-confetti`, `@types/react`, `@types/react-dom` to the rest of the system?",
+      "why": "4 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `analyze_damage` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.0707070707070707 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `estimate_claim()` connect `estimate_claim` to `app.py`, `main.py`?",
+      "why": "High betweenness centrality (0.079) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `test_app.py` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `compilerOptions` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

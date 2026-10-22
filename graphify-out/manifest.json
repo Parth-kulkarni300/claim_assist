@@ -1,0 +1,116 @@
+{
+  "app.py": {
+    "mtime": 1792670180.3739238,
+    "seen": 1792671665.7645774,
+    "ast_hash": "cec2a306a9f710b9da2c8bb9961c77e6",
+    "semantic_hash": "cec2a306a9f710b9da2c8bb9961c77e6"
+  },
+  "frontend/package.json": {
+    "mtime": 1792669560.817551,
+    "seen": 1792671665.7645774,
+    "ast_hash": "ce13539b8516fada8f6716225a2ed9bb",
+    "semantic_hash": "ce13539b8516fada8f6716225a2ed9bb"
+  },
+  "frontend/src/App.tsx": {
+    "mtime": 1792670355.9293082,
+    "seen": 1792671665.7645774,
+    "ast_hash": "efacb0a586a36eea75ab64e8fb857bd4",
+    "semantic_hash": "efacb0a586a36eea75ab64e8fb857bd4"
+  },
+  "frontend/src/api.ts": {
+    "mtime": 1792669578.3350973,
+    "seen": 1792671665.7645774,
+    "ast_hash": "156b84e625245570e592c0291cb6cb85",
+    "semantic_hash": "156b84e625245570e592c0291cb6cb85"
+  },
+  "frontend/src/components/CustomerDashboard.tsx": {
+    "mtime": 1792669669.7824318,
+    "seen": 1792671665.7645774,
+    "ast_hash": "75d9053bcea72350050fd30b3cefdd8a",
+    "semantic_hash": "75d9053bcea72350050fd30b3cefdd8a"
+  },
+  "frontend/src/components/InsurerDashboard.tsx": {
+    "mtime": 1792669761.647433,
+    "seen": 1792671665.7645774,
+    "ast_hash": "11bfa92f8ebcfcff129db98328ec9db5",
+    "semantic_hash": "11bfa92f8ebcfcff129db98328ec9db5"
+  },
+  "frontend/src/main.tsx": {
+    "mtime": 1792669725.1285374,
+    "seen": 1792671665.7645774,
+    "ast_hash": "237c00790ba23bfc7e572613f1c8ec47",
+    "semantic_hash": "237c00790ba23bfc7e572613f1c8ec47"
+  },
+  "frontend/src/types.ts": {
+    "mtime": 1792669570.4656126,
+    "seen": 1792671665.7645774,
+    "ast_hash": "4f5bf0f290e99778af355e9f0138004e",
+    "semantic_hash": "4f5bf0f290e99778af355e9f0138004e"
+  },
+  "frontend/tsconfig.json": {
+    "mtime": 1792669515.479262,
+    "seen": 1792671665.7645774,
+    "ast_hash": "6444809afaef28d48fb00f72bb122345",
+    "semantic_hash": "6444809afaef28d48fb00f72bb122345"
+  },
+  "frontend/vite.config.ts": {
+    "mtime": 1792669501.4417775,
+    "seen": 1792671665.7645774,
+    "ast_hash": "1326ff70f7bba32ac63a91fd3629b1c9",
+    "semantic_hash": "1326ff70f7bba32ac63a91fd3629b1c9"
+  },
+  "main.py": {
+    "mtime": 1792663684.2941184,
+    "seen": 1792671665.7645774,
+    "ast_hash": "15456fa280718bbdb1577c1e96476532",
+    "semantic_hash": "15456fa280718bbdb1577c1e96476532"
+  },
+  "seed_claims.py": {
+    "mtime": 1792669132.7332563,
+    "seen": 1792671665.7645774,
+    "ast_hash": "0b74dad78b0a6e4afef5b14d5bd30152",
+    "semantic_hash": "0b74dad78b0a6e4afef5b14d5bd30152"
+  },
+  "src/pricing.py": {
+    "mtime": 1792668923.8509154,
+    "seen": 1792671665.7645774,
+    "ast_hash": "830c09ac22379f6e8aee42e252f62086",
+    "semantic_hash": "830c09ac22379f6e8aee42e252f62086"
+  },
+  "src/report.py": {
+    "mtime": 1792663516.2047536,
+    "seen": 1792671665.7645774,
+    "ast_hash": "620ad45feb262760b43dfa19c775bf70",
+    "semantic_hash": "620ad45feb262760b43dfa19c775bf70"
+  },
+  "src/vision.py": {
+    "mtime": 1792671577.0964935,
+    "seen": 1792671665.7645774,
+    "ast_hash": "4936ea46679261c933b3980c21ee0262",
+    "semantic_hash": "4936ea46679261c933b3980c21ee0262"
+  },
+  "tests/test_app.py": {
+    "mtime": 1792669843.0027242,
+    "seen": 1792671665.7645774,
+    "ast_hash": "3977c7951a785ed959ce52c9be01cd3e",
+    "semantic_hash": "3977c7951a785ed959ce52c9be01cd3e"
+  },
+  "tests/test_pricing.py": {
+    "mtime": 1792668971.7898023,
+    "seen": 1792671665.7645774,
+    "ast_hash": "48efa9ac874a05f82b409da817b38c3a",
+    "semantic_hash": "48efa9ac874a05f82b409da817b38c3a"
+  },
+  "tests/test_report.py": {
+    "mtime": 1792663549.5477605,
+    "seen": 1792671665.7645774,
+    "ast_hash": "083ba18e2c03c395128c34d95ecdc105",
+    "semantic_hash": "083ba18e2c03c395128c34d95ecdc105"
+  },
+  "tests/test_vision.py": {
+    "mtime": 1792666848.9984274,
+    "seen": 1792671665.7645774,
+    "ast_hash": "b4de4e1740d5f7dfed6561fbdbe43e00",
+    "semantic_hash": "b4de4e1740d5f7dfed6561fbdbe43e00"
+  }
+}

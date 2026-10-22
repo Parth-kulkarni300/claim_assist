@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClaimAssist – Insurance Dashboard</title>
+  <meta name="description" content="Insurance company dashboard for reviewing and approving AI-assessed vehicle damage claims."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #040b0f; --surface: #081018; --card: rgba(255,255,255,0.03);
+      --card-hover: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07); --border-hover: rgba(16,185,129,0.4);
+      --text: #e2e8f0; --muted: #64748b; --subtle: #94a3b8;
+      --green: #10b981; --green-light: #34d399; --green-glow: rgba(16,185,129,0.3);
+      --blue: #3b82f6; --blue-light: #60a5fa;
+      --amber: #f59e0b; --red: #ef4444; --red-light: #fca5a5;
+      --purple: #8b5cf6;
+      --radius: 16px; --radius-sm: 10px;
+    }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(4,11,15,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .nav-logo-icon { font-size: 1.4rem; }
+    .nav-logo-text { font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg,#34d399,#60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-badge { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: var(--green-light); padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-refresh { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--subtle); padding: 0.35rem 0.9rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .nav-refresh:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .nav-home { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .nav-home:hover { color: var(--text); }
+    .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s ease-in-out infinite; margin-right: 4px; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+      background: var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-cell {
+      background: var(--surface); padding: 1.1rem 1.5rem; text-align: center;
+    }
+    .stat-num { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+    .stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.15rem; }
+    .stat-total  .stat-num { color: var(--text); }
+    .stat-pending .stat-num { color: var(--amber); }
+    .stat-approved .stat-num { color: var(--green-light); }
+    .stat-rejected .stat-num { color: var(--red-light); }
+    .stat-payout  .stat-num { font-size: 1.2rem; color: var(--green-light); }
+    @media (max-width: 680px) { .stats-bar { grid-template-columns: repeat(3,1fr); } }
+
+    /* ── Container ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+    /* ── Section title ── */
+    .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .section-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .section-title .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-amber  { background: var(--amber); }
+    .dot-green  { background: var(--green); }
+    .dot-muted  { background: var(--muted); }
+    .section-count { font-size: 0.8rem; color: var(--muted); background: rgba(255,255,255,0.06); padding: 0.2rem 0.6rem; border-radius: 50px; }
+
+    /* ── Claim cards ── */
+    .claims-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; }
+    .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5; }
+
+    .claim-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      overflow: hidden; transition: border-color 0.2s, background 0.2s;
+    }
+    .claim-card:hover { border-color: rgba(255,255,255,0.12); background: var(--card-hover); }
+
+    /* Claim header row */
+    .claim-hdr {
+      display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem;
+      cursor: pointer; flex-wrap: wrap;
+    }
+    .claim-thumb { width: 80px; height: 62px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.05); }
+    .claim-thumb-ph { width: 80px; height: 62px; border-radius: 10px; background: rgba(255,255,255,0.06); display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0; }
+    .claim-meta { flex: 1; min-width: 0; }
+    .claim-id-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
+    .claim-id { font-family: monospace; font-size: 0.82rem; color: var(--muted); }
+    .claim-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .claim-sub  { font-size: 0.8rem; color: var(--subtle); }
+    .claim-hdr-right { text-align: right; flex-shrink: 0; }
+    .claim-date-hdr { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+    .expand-icon { font-size: 0.85rem; color: var(--muted); margin-left: auto; transition: transform 0.25s; flex-shrink: 0; }
+    .claim-card.expanded .expand-icon { transform: rotate(180deg); }
+
+    /* Badges */
+    .badge { display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em; }
+    .badge-pending  { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+    .badge-approved { background:rgba(16,185,129,.15);  color:#34d399; border:1px solid rgba(16,185,129,.3); }
+    .badge-rejected { background:rgba(239,68,68,.12);   color:#f87171; border:1px solid rgba(239,68,68,.25); }
+    .badge-review   { background:rgba(139,92,246,.15);  color:#a78bfa; border:1px solid rgba(139,92,246,.3); }
+
+    /* Detail panel */
+    .claim-detail { display: none; border-top: 1px solid var(--border); padding: 1.5rem; }
+    .claim-card.expanded .claim-detail { display: block; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 620px) { .detail-grid { grid-template-columns: 1fr; } }
+
+    .detail-img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 220px; background: rgba(255,255,255,0.05); }
+
+    .detail-section { margin-bottom: 1.25rem; }
+    .detail-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.6rem; }
+
+    .damage-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .damage-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.55rem 0.9rem; }
+    .damage-part { font-size: 0.88rem; font-weight: 600; }
+    .damage-type { font-size: 0.78rem; color: var(--subtle); }
+    .damage-sev  { font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 50px; }
+    .sev-minor    { background: rgba(59,130,246,.15);  color: #60a5fa; }
+    .sev-moderate { background: rgba(245,158,11,.15);  color: #fbbf24; }
+    .sev-severe   { background: rgba(239,68,68,.15);   color: #f87171; }
+
+    /* Cost table */
+    .cost-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .cost-table th { text-align: left; color: var(--muted); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.4rem 0.6rem; }
+    .cost-table td { padding: 0.55rem 0.6rem; border-top: 1px solid rgba(255,255,255,0.05); }
+    .cost-table .cost-val { text-align: right; font-weight: 600; }
+    .cost-table tfoot td { font-weight: 700; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+    .total-payout { color: var(--green-light); font-size: 1rem; }
+
+    /* Uncertainties */
+    .uncertainty-list { display: flex; flex-direction: column; gap: 0.45rem; }
+    .uncertainty-item { font-size: 0.83rem; color: #fbbf24; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 0.5rem 0.9rem; }
+
+    /* Actions */
+    .actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .btn-approve, .btn-reject {
+      flex: 1; padding: 0.8rem 1.5rem; border: none; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s; min-width: 140px;
+    }
+    .btn-approve { background: linear-gradient(135deg, var(--green), #059669); color: #fff; }
+    .btn-reject  { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+    .btn-approve:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-reject:hover  { background: rgba(239,68,68,0.22); }
+    .approve-amount { font-size: 0.78rem; opacity: 0.85; margin-left: 0.35rem; }
+
+    .approved-banner {
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 10px; padding: 0.9rem 1.2rem; margin-top: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .rejected-banner {
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px; padding: 0.9rem 1.2rem; margin-top: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem; color: #f87171;
+    }
+    .banner-icon { font-size: 1.4rem; }
+    .banner-text strong { display: block; font-size: 0.92rem; }
+    .banner-text span   { font-size: 0.8rem; color: var(--subtle); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #0f1a2e; border: 1px solid var(--border); border-radius: 20px;
+      padding: 2rem; width: 100%; max-width: 440px;
+      transform: translateY(20px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .modal-sub   { font-size: 0.85rem; color: var(--subtle); margin-bottom: 1.5rem; }
+    .modal-field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+    .modal-field input, .modal-field textarea {
+      width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: inherit; font-size: 0.95rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .modal-field input:focus, .modal-field textarea:focus { border-color: var(--green); }
+    .modal-field textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .modal-confirm { flex: 1; padding: 0.8rem; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, var(--green), #059669); color: #fff; transition: opacity 0.2s; }
+    .modal-confirm.danger { background: linear-gradient(135deg, var(--red), #b91c1c); }
+    .modal-cancel { flex: 1; padding: 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.2s; }
+    .modal-cancel:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; background: #1a2535; border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.5rem; max-width: 360px; font-size: 0.9rem; transform: translateY(20px); opacity: 0; transition: all 0.3s ease; pointer-events: none; }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-color: rgba(16,185,129,0.4); }
+    #toast.error   { border-color: rgba(239,68,68,0.4); }
+    .toast-title { font-weight: 700; margin-bottom: 0.2rem; }
+    .toast-body  { color: var(--subtle); font-size: 0.82rem; }
+
+    .sep { height: 1px; background: var(--border); margin: 2.5rem 0 1.5rem; }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="/"><span class="nav-logo-icon">🛡️</span><span class="nav-logo-text">ClaimAssist</span></a>
+  <span class="nav-badge">🏢 Insurance Dashboard</span>
+  <div class="nav-right">
+    <span style="font-size:.8rem;color:var(--subtle)"><span class="live-dot"></span>Live</span>
+    <button class="nav-refresh" onclick="loadClaims()">↻ Refresh</button>
+    <a class="nav-home" href="/">← Home</a>
+  </div>
+</nav>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-cell stat-total">
+    <div class="stat-num" id="stat-total">—</div>
+    <div class="stat-label">Total Claims</div>
+  </div>
+  <div class="stat-cell stat-pending">
+    <div class="stat-num" id="stat-pending">—</div>
+    <div class="stat-label">Pending</div>
+  </div>
+  <div class="stat-cell stat-approved">
+    <div class="stat-num" id="stat-approved">—</div>
+    <div class="stat-label">Approved</div>
+  </div>
+  <div class="stat-cell stat-rejected">
+    <div class="stat-num" id="stat-rejected">—</div>
+    <div class="stat-label">Rejected</div>
+  </div>
+  <div class="stat-cell stat-payout">
+    <div class="stat-num" id="stat-payout">₹0</div>
+    <div class="stat-label">Total Paid Out</div>
+  </div>
+</div>
+
+<main class="container">
+  <!-- Pending claims -->
+  <div class="section-hdr">
+    <div class="section-title"><span class="dot dot-amber"></span> Pending Review</div>
+    <span class="section-count" id="pending-count">0 claims</span>
+  </div>
+  <div class="claims-list" id="pending-list">
+    <div class="empty-state"><div class="empty-icon">✅</div>No pending claims – all caught up!</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Processed claims -->
+  <div class="section-hdr">
+    <div class="section-title"><span class="dot dot-muted"></span> Processed Claims</div>
+    <span class="section-count" id="processed-count">0 claims</span>
+  </div>
+  <div class="claims-list" id="processed-list">
+    <div class="empty-state"><div class="empty-icon">📋</div>No processed claims yet.</div>
+  </div>
+</main>
+
+<!-- Approve modal -->
+<div class="modal-overlay" id="approve-modal">
+  <div class="modal">
+    <div class="modal-title">✅ Approve Claim</div>
+    <div class="modal-sub" id="approve-modal-sub">Confirm the payout amount for this claim.</div>
+    <div class="modal-field">
+      <label>Payout Amount (INR)</label>
+      <input type="number" id="approve-amount-input" min="0" step="100"/>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('approve-modal')">Cancel</button>
+      <button class="modal-confirm" id="approve-confirm-btn">Approve & Pay</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject modal -->
+<div class="modal-overlay" id="reject-modal">
+  <div class="modal">
+    <div class="modal-title">❌ Reject Claim</div>
+    <div class="modal-sub" id="reject-modal-sub">Provide a reason for rejecting this claim.</div>
+    <div class="modal-field">
+      <label>Rejection Reason</label>
+      <textarea id="reject-reason-input" placeholder="e.g. Damage pre-dates policy inception, insufficient documentation…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('reject-modal')">Cancel</button>
+      <button class="modal-confirm danger" id="reject-confirm-btn">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"><div class="toast-title" id="toast-title"></div><div class="toast-body" id="toast-body"></div></div>
+
+<script>
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  const fmt = n => Number(n).toLocaleString('en-IN');
+  const fmtDate = d => new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+  const fmtPart = s => (s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  function toast(title, body, type='success') {
+    const el = document.getElementById('toast');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-body').textContent  = body;
+    el.className = 'show ' + type;
+    setTimeout(() => { el.className = ''; }, 4500);
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // Close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  // ── Severity badge ────────────────────────────────────────────────────────
+  function sevBadge(s) {
+    const cls = { minor: 'sev-minor', moderate: 'sev-moderate', severe: 'sev-severe' }[s] || 'sev-minor';
+    return `<span class="damage-sev ${cls}">${cap(s)}</span>`;
+  }
+
+  // ── Render a single claim card ────────────────────────────────────────────
+  function renderClaim(c, isPending) {
+    const pr = c.pricing_result || {};
+    const vr = c.vision_result  || {};
+    const damages = vr.damages || [];
+    const uncertainties = vr.uncertainties || [];
+    const breakdown = pr.breakdown || [];
+
+    // Badge
+    const badge = {
+      pending:  `<span class="badge badge-pending">⏳ Pending</span>`,
+      approved: `<span class="badge badge-approved">✅ Approved</span>`,
+      rejected: `<span class="badge badge-rejected">❌ Rejected</span>`,
+    }[c.status] || `<span class="badge badge-review">🔍 Review</span>`;
+
+    // Damage rows
+    const damageRows = damages.length
+      ? damages.map(d => `
+          <div class="damage-item">
+            <div>
+              <div class="damage-part">${fmtPart(d.part)}</div>
+              <div class="damage-type">${fmtPart(d.damage_type)}</div>
+            </div>
+            ${sevBadge(d.severity)}
+          </div>`).join('')
+      : `<div style="color:var(--muted);font-size:.85rem;padding:.4rem .6rem">No specific damage identified by AI.</div>`;
+
+    // Cost table
+    let costSection = '';
+    if (breakdown.length) {
+      const rows = breakdown.map(b => `
+        <tr>
+          <td>${fmtPart(b.part)}<br/><span style="color:var(--subtle);font-size:.78rem">${fmtPart(b.damage_type)} · ${cap(b.severity)}</span></td>
+          <td class="cost-val">₹${fmt(b.estimated_repair_cost_inr)}</td>
+        </tr>`).join('');
+      const total = pr.total_repair_estimate_inr ?? '';
+      const ded   = pr.deductible_inr ?? '';
+      const payout = pr.estimated_payout_inr ?? '';
+      costSection = `
+        <div class="detail-section">
+          <div class="detail-label">💰 Cost Breakdown</div>
+          <table class="cost-table">
+            <thead><tr><th>Item</th><th style="text-align:right">Cost</th></tr></thead>
+            <tbody>${rows}</tbody>
+            <tfoot>
+              ${total !== '' ? `<tr><td>Total Repair</td><td class="cost-val">₹${fmt(total)}</td></tr>` : ''}
+              ${ded   !== '' ? `<tr><td style="color:var(--muted)">Deductible</td><td class="cost-val" style="color:var(--muted)">– ₹${fmt(ded)}</td></tr>` : ''}
+              ${payout !== '' ? `<tr><td class="total-payout">Estimated Payout</td><td class="cost-val total-payout">₹${fmt(payout)}</td></tr>` : ''}
+            </tfoot>
+          </table>
+        </div>`;
+    } else if (pr.status === 'human_review') {
+      const known = pr.known_damage_estimate_inr;
+      costSection = `
+        <div class="detail-section">
+          <div class="detail-label">💰 Cost Breakdown</div>
+          <div style="color:var(--amber);font-size:.85rem;padding:.5rem;background:rgba(245,158,11,.08);border-radius:8px;border:1px solid rgba(245,158,11,.2)">
+            ⚠️ ${Array.isArray(pr.reason) ? pr.reason.join('; ') : (pr.reason || 'Human review required for cost estimation.')}
+            ${known != null ? `<br/>Partial estimate: ₹${fmt(known)}` : ''}
+          </div>
+        </div>`;
+    }
+
+    // Uncertainties
+    const uncertSection = uncertainties.length ? `
+      <div class="detail-section">
+        <div class="detail-label">⚠️ AI Uncertainties</div>
+        <div class="uncertainty-list">
+          ${uncertainties.map(u => `<div class="uncertainty-item">${u}</div>`).join('')}
+        </div>
+      </div>` : '';
+
+    // Human review flag
+    const reviewFlag = vr.human_review_required
+      ? `<span class="badge badge-review" style="margin-left:.5rem">🔍 Human Review</span>` : '';
+
+    // Action buttons or result banner
+    let actionHtml = '';
+    if (c.status === 'pending') {
+      const suggestedAmt = pr.estimated_payout_inr ?? pr.known_damage_estimate_inr ?? 0;
+      actionHtml = `
+        <div class="actions">
+          <button class="btn-approve" onclick="openApproveModal('${c.id}', ${suggestedAmt})">
+            ✅ Approve <span class="approve-amount">₹${fmt(suggestedAmt)}</span>
+          </button>
+          <button class="btn-reject" onclick="openRejectModal('${c.id}')">❌ Reject</button>
+        </div>`;
+    } else if (c.status === 'approved') {
+      actionHtml = `
+        <div class="approved-banner">
+          <div class="banner-icon">✅</div>
+          <div class="banner-text">
+            <strong>Approved · ₹${fmt(c.approved_amount)}</strong>
+            <span>Paid on ${fmtDate(c.processed_at)}</span>
+          </div>
+        </div>`;
+    } else if (c.status === 'rejected') {
+      actionHtml = `
+        <div class="rejected-banner">
+          <div class="banner-icon">❌</div>
+          <div class="banner-text">
+            <strong>Rejected</strong>
+            <span>${c.reject_reason || 'No reason provided.'}</span>
+          </div>
+        </div>`;
+    }
+
+    const thumbHtml = c.image_filename
+      ? `<img class="claim-thumb" src="/uploads/${c.image_filename}" alt="Vehicle" loading="lazy"/>`
+      : `<div class="claim-thumb-ph">🚗</div>`;
+
+    const detailThumb = c.image_filename
+      ? `<img class="detail-img" src="/uploads/${c.image_filename}" alt="Damage photo" loading="lazy"/>`
+      : `<div style="background:rgba(255,255,255,0.05);border-radius:12px;height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem">🚗</div>`;
+
+    return `
+      <div class="claim-card" id="card-${c.id}">
+        <div class="claim-hdr" onclick="toggleCard('${c.id}')">
+          ${thumbHtml}
+          <div class="claim-meta">
+            <div class="claim-id-row">
+              <span class="claim-id">#${c.id}</span>
+              ${badge}${reviewFlag}
+            </div>
+            <div class="claim-name">${c.customer_name}</div>
+            <div class="claim-sub">🚗 ${c.vehicle_number}</div>
+          </div>
+          <div class="claim-hdr-right">
+            ${pr.status === 'estimate_ready' ? `<div style="font-size:1.1rem;font-weight:700;color:var(--green-light)">₹${fmt(pr.estimated_payout_inr)}</div><div style="font-size:.72rem;color:var(--muted)">Est. payout</div>` : ''}
+            <div class="claim-date-hdr">${fmtDate(c.submitted_at)}</div>
+          </div>
+          <span class="expand-icon">▼</span>
+        </div>
+
+        <div class="claim-detail">
+          <div class="detail-grid">
+            <div>${detailThumb}</div>
+            <div>
+              <div class="detail-section">
+                <div class="detail-label">🔍 Damage Assessment</div>
+                <div class="damage-list">${damageRows}</div>
+              </div>
+              ${uncertSection}
+            </div>
+          </div>
+          ${costSection}
+          ${actionHtml}
+        </div>
+      </div>`;
+  }
+
+  // ── Toggle expand ─────────────────────────────────────────────────────────
+  function toggleCard(id) {
+    document.getElementById(`card-${id}`).classList.toggle('expanded');
+  }
+
+  // ── Load & render all claims ──────────────────────────────────────────────
+  async function loadClaims() {
+    let claims = [];
+    try {
+      const res = await fetch('/api/claims');
+      claims = await res.json();
+    } catch { return; }
+
+    const pending   = claims.filter(c => c.status === 'pending');
+    const processed = claims.filter(c => c.status !== 'pending');
+
+    // Stats
+    const totalPaid = processed.filter(c => c.status === 'approved').reduce((s,c) => s + (c.approved_amount||0), 0);
+    document.getElementById('stat-total').textContent    = claims.length;
+    document.getElementById('stat-pending').textContent  = pending.length;
+    document.getElementById('stat-approved').textContent = claims.filter(c=>c.status==='approved').length;
+    document.getElementById('stat-rejected').textContent = claims.filter(c=>c.status==='rejected').length;
+    document.getElementById('stat-payout').textContent   = `₹${fmt(totalPaid)}`;
+    document.getElementById('pending-count').textContent   = `${pending.length} claim${pending.length!==1?'s':''}`;
+    document.getElementById('processed-count').textContent = `${processed.length} claim${processed.length!==1?'s':''}`;
+
+    // Render pending
+    const pendingEl = document.getElementById('pending-list');
+    pendingEl.innerHTML = pending.length
+      ? pending.map(c => renderClaim(c, true)).join('')
+      : `<div class="empty-state"><div class="empty-icon">✅</div>All caught up – no pending claims!</div>`;
+
+    // Render processed
+    const processedEl = document.getElementById('processed-list');
+    processedEl.innerHTML = processed.length
+      ? processed.map(c => renderClaim(c, false)).join('')
+      : `<div class="empty-state"><div class="empty-icon">📋</div>No processed claims yet.</div>`;
+  }
+
+  // ── Approve modal ─────────────────────────────────────────────────────────
+  let currentClaimId = null;
+
+  function openApproveModal(claimId, suggested) {
+    currentClaimId = claimId;
+    document.getElementById('approve-amount-input').value = suggested || 0;
+    document.getElementById('approve-modal-sub').textContent = `Claim #${claimId} · Confirm the payout amount.`;
+    openModal('approve-modal');
+  }
+
+  document.getElementById('approve-confirm-btn').addEventListener('click', async () => {
+    const amount = parseInt(document.getElementById('approve-amount-input').value, 10);
+    if (isNaN(amount) || amount < 0) { toast('Invalid Amount', 'Enter a valid payout amount.', 'error'); return; }
+
+    try {
+      const res = await fetch(`/api/claims/${currentClaimId}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Approval failed');
+      closeModal('approve-modal');
+      toast(`Claim #${currentClaimId} Approved ✅`, `₹${fmt(amount)} will be reflected to customer.`, 'success');
+      await loadClaims();
+    } catch (err) {
+      toast('Approval Failed', err.message, 'error');
+    }
+  });
+
+  // ── Reject modal ──────────────────────────────────────────────────────────
+  function openRejectModal(claimId) {
+    currentClaimId = claimId;
+    document.getElementById('reject-reason-input').value = '';
+    document.getElementById('reject-modal-sub').textContent = `Claim #${claimId} · Provide a rejection reason.`;
+    openModal('reject-modal');
+  }
+
+  document.getElementById('reject-confirm-btn').addEventListener('click', async () => {
+    const reason = document.getElementById('reject-reason-input').value.trim();
+    if (!reason) { toast('Reason Required', 'Please enter a rejection reason.', 'error'); return; }
+
+    try {
+      const res = await fetch(`/api/claims/${currentClaimId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Rejection failed');
+      closeModal('reject-modal');
+      toast(`Claim #${currentClaimId} Rejected`, reason, 'error');
+      await loadClaims();
+    } catch (err) {
+      toast('Rejection Failed', err.message, 'error');
+    }
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  loadClaims();
+  setInterval(loadClaims, 5000); // auto-refresh every 5s
+</script>
+</body>
+</html>
